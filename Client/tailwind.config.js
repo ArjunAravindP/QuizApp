@@ -5,6 +5,7 @@ export default {
     extend: {
       backgroundImage: {
         'custom-bg': "url('./src/assets/background.svg')",
+        'blur-bg': "url('./src/assets/Blur.svg')",
       },
       colors: {
         fadeBlack: '#1F1F1F',
