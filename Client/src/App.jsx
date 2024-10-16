@@ -4,6 +4,7 @@ import HomePage from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import NotFound from './pages/NotFound';
+import QuizPage from './pages/Quiz';
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,7 @@ const router = createBrowserRouter([
   { path: '/login', element: <Login /> },
   { path: '/signup', element: <Signup /> },
   { path: '*', element: <NotFound /> },
+  { path: '/quiz/:category', element: <QuizPage /> },
 ]);
 
 export default function App() {
