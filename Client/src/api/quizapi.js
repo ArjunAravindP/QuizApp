@@ -32,7 +32,6 @@ export async function fetchQuizData(numQuestions, selectedTopic) {
       topic = 9;
       break;
   }
-  console.log(topic);
   try {
     const response = await fetch(
       `https://opentdb.com/api.php?amount=${numQuestions}&category=${topic}&type=multiple`,
@@ -46,7 +45,6 @@ export async function fetchQuizData(numQuestions, selectedTopic) {
     }
 
     const data = await response.json();
-    console.log(data);
 
     if (!data.results) throw new Error('No results found');
 
@@ -56,6 +54,7 @@ export async function fetchQuizData(numQuestions, selectedTopic) {
         () => Math.random() - 0.5
       ),
       answer: item.correct_answer,
+      selectedAns: null,
     }));
 
     return array;

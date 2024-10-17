@@ -23,8 +23,11 @@ export default function SignUp() {
     if (!formData.lastName.trim()) newErrors.lastName = 'Last Name is required';
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(formData.email))
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!emailRegex.test(formData.email)) {
       newErrors.email = 'Enter a valid email';
+    }
 
     if (formData.password.length < 8)
       newErrors.password = 'Password must be at least 8 characters';
@@ -56,10 +59,21 @@ export default function SignUp() {
           },
           body: JSON.stringify(formData),
         });
+
         const data = await response.json();
-        if ((await response).ok) {
+        if (response.ok) {
           console.log('Signed up successfully', data);
           alert('User registered successfully!');
+          // Reset the form
+          setFormData({
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: '',
+            password: '',
+            confirmPassword: '',
+          });
+          setErrors({});
         } else {
           console.log('Registration failed:', data.message);
           alert(`Registration failed: ${data.message}`);
@@ -157,10 +171,13 @@ export default function SignUp() {
               )}
 
               <button
-                className="bg-blue-600 w-full h-12 rounded-lg text-white font-semibold text-lg mt-4 hover:bg-blue-700 transition"
+                className={`bg-blue-600 w-full h-12 rounded-lg text-white font-semibold text-lg mt-4 hover:bg-blue-700 transition ${
+                  loading ? 'cursor-not-allowed opacity-50' : ''
+                }`}
                 type="submit"
+                disabled={loading}
               >
-                {loading ? 'Signing Up...' : 'SignUp'}
+                {loading ? 'Signing Up...' : 'Sign Up'}
               </button>
             </form>
           </div>

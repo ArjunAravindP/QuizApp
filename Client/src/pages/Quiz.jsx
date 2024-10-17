@@ -7,8 +7,10 @@ import {
   completeQuiz,
   setError,
   resetQuiz,
+  setSelectedAns,
 } from '../store/quizSlice';
 import { useNavigate } from 'react-router-dom';
+import QuizComplete from '../components/QuizPage/QuizComplete';
 
 export default function QuizPage() {
   const dispatch = useDispatch();
@@ -21,6 +23,7 @@ export default function QuizPage() {
     score,
     quizComplete,
     error,
+    topic,
   } = useSelector((state) => state.quiz);
 
   useEffect(() => {
@@ -34,6 +37,8 @@ export default function QuizPage() {
   };
 
   const handleContinue = () => {
+    dispatch(setSelectedAns({ selectedOption, currentQuizIndex }));
+
     if (selectedOption === quizData[currentQuizIndex]?.answer) {
       dispatch(incrementScore());
     }
@@ -57,15 +62,11 @@ export default function QuizPage() {
 
   if (quizComplete) {
     return (
-      <div className="w-full min-h-screen bg-purple-200 flex justify-center items-center">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold">Quiz Complete!</h1>
-          <p className="text-lg mt-2">
-            Your Score: {score} / {quizData.length}
-          </p>
-          <button onClick={handleRestartQuiz}>Continue</button>
-        </div>
-      </div>
+      <QuizComplete
+        score={score}
+        total={quizData.length}
+        handleRestartQuiz={handleRestartQuiz}
+      />
     );
   }
 
@@ -74,12 +75,17 @@ export default function QuizPage() {
   return (
     <div className="w-full min-h-screen bg-purple-200 flex justify-center items-center">
       <div className="w-full max-w-4xl mx-auto bg-white shadow-lg rounded-lg">
-        <div className="flex flex-row items-center justify-between p-4 border-b">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
-              <span className="text-white text-sm font-semibold">{score}</span>
+        <div className="flex flex-row r p-4 border-b w-full">
+          <div className="flex items-center justify-between space-x-2 w-full px-5">
+            <div className="w-20 h-8 rounded bg-blue-500 flex items-center justify-center">
+              <span className="text-white text-sm font-semibold">
+                Score: {score}
+              </span>
             </div>
-            <h2 className="text-lg font-bold">Fantasy Quiz</h2>
+            <h2 className="text-lg font-bold">{topic}</h2>
+            <button className="bg-red-500 p-3 font-bold text-white rounded py-1">
+              End Quiz
+            </button>
           </div>
         </div>
         {/* Content Section */}
@@ -92,7 +98,7 @@ export default function QuizPage() {
               <div
                 key={index}
                 className={`flex items-center space-x-4 p-4 bg-gray-50 rounded-lg cursor-pointer 
-                  ${selectedOption === option ? 'bg-blue-400' : ''}`}
+                  ${selectedOption === option ? 'bg-blue-300' : ''}`}
                 onClick={() => handleOptionSelect(option)}
               >
                 <span className="text-lg font-semibold text-gray-500">
@@ -106,13 +112,13 @@ export default function QuizPage() {
           </div>
         </div>
         {/* Footer Section */}
-        <div className="flex justify-between items-center p-4 border-t flex-wrap">
+        <div className="flex md:flex-row flex-col w-full items-center gap-y-5 md:justify-between p-4 border-t ">
           <progress
             value={(currentQuizIndex + 1) * (100 / quizData.length)}
             max="100"
-            className="w-1/3"
+            className="md:w-1/3 w-3/4"
           ></progress>
-          <span className="text-sm text-gray-500">
+          <span className="text-lg font-bold text-gray-500">
             {currentQuizIndex + 1} / {quizData.length}
           </span>
           <button

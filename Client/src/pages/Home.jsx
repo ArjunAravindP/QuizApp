@@ -4,9 +4,20 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setQuizData } from '../store/quizSlice';
 import { resetQuiz } from '../store/quizSlice';
+import { setTopic } from '../store/quizSlice';
 import { useEffect } from 'react';
 import { useState } from 'react';
+import Art from '../assets/art.svg';
+import movie from '../assets/movie.svg';
+import books from '../assets/books.svg';
+import animals from '../assets/animals.svg';
+import math from '../assets/math.svg';
+import politics from '../assets/politics.svg';
+import general from '../assets/general.svg';
+import history from '../assets/history.svg';
+import Sience from '../assets/science.svg';
 import PopUp from '../components/Home/Popup';
+import TopicOption from '../components/Home/TopicOption';
 
 export default function HomePage() {
   const [isPopupVisible, setPopupVisible] = useState(false);
@@ -22,9 +33,14 @@ export default function HomePage() {
     setPopupVisible(true);
     setSelcetedTopic(topic);
   };
-  const closePopup = async (numQuestions) => {
+  const closePopup = async () => {
+    setPopupVisible(false);
+  };
+  const submitTopic = async (numQuestions) => {
     try {
       const data = await fetchQuizData(numQuestions, selectedTopic);
+      dispatch(setTopic(selectedTopic));
+
       dispatch(setQuizData(data));
       navigate(`/quiz/${selectedTopic}`);
     } catch (error) {
@@ -55,33 +71,33 @@ export default function HomePage() {
           </p>
           <div className="flex flex-wrap gap-3 items-center justify-center">
             {[
-              { name: 'Art' },
-              { name: 'Science' },
-              { name: 'Politics' },
-              { name: 'General' },
-              { name: 'Filim' },
-              { name: 'Books' },
-              { name: 'Mathematics' },
-              { name: 'History' },
-              { name: 'Animals' },
+              { name: 'Art', icon: Art },
+              { name: 'Science', icon: Sience },
+              { name: 'Politics', icon: politics },
+              { name: 'General', icon: general },
+              { name: 'Filim', icon: movie },
+              { name: 'Books', icon: books },
+              { name: 'Mathematics', icon: math },
+              { name: 'History', icon: history },
+              { name: 'Animals', icon: animals },
             ].map((topic) => (
-              <button
+              <TopicOption
                 key={topic.name}
-                onClick={() => handleClick(topic.name)}
-                className={`flex flex-col w-32 h-24 items-center justify-center p-4 bg-purple-100 hover:bg-purple-200 text-purple-800 rounded-md ${
-                  topic.name === 'Math' ? 'ring-2 ring-blue-400' : ''
-                }`}
-              >
-                <div className="w-6 h-6 mb-2 bg-purple-300 rounded-full"></div>
-                {topic.name}
-              </button>
+                topic={topic}
+                icon={topic.icon}
+                handleClick={handleClick}
+              />
             ))}
           </div>
         </div>
       </div>
       {/* Pop-up component */}
       {isPopupVisible && (
-        <PopUp selectedTopic={selectedTopic} closePopup={closePopup} />
+        <PopUp
+          selectedTopic={selectedTopic}
+          submitTopic={submitTopic}
+          closePopup={closePopup}
+        />
       )}
     </>
   );

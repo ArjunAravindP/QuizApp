@@ -1,52 +1,28 @@
 const User = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { check, validationResult } = require('express-validator');
 
-exports.register = async (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
-
-  try {
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
-
-    // Hash the password before saving
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = new User({
-      firstName,
-      lastName,
-      email,
-      password: hashedPassword,
-    });
-    console.log(user);
-    await user.save();
-
-    res.status(201).json({ message: 'User registered successfully' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-exports.login = async (req, res) => {
+exports.postLogin = async (req, res, next) => {
   const { email, password } = req.body;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   try {
     const user = await User.findOne({ email });
+    // Check if user exists
     if (!user) {
-      return res
-        .status(400)
-        .json({ message: 'A user with that email does not exist' });
+      return res.status(400).json({ message: 'Invalid email or password' });
     }
 
-    // Compare the passwords
-    const isMatch = await bcrypt.compare(password, user.password);
+    // Trim the password before comparing
+    const isMatch = await bcrypt.compare(password.trim(), user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid password' });
+      return res.status(400).json({ message: 'Invalid email or password' });
     }
 
-    // Create a JWT token
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
@@ -63,6 +39,39 @@ exports.login = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error('Error during login:', err);
+    res.status(500).json({ message: 'Error during login' });
+  }
+};
+
+exports.signUp = async (req, res, next) => {
+  const { firstName, lastName, email, password } = req.body;
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    let existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ message: 'User with this email already exists' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password.trim(), 10); // Trimmed password
+    const newUser = new User({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+    });
+
+    await newUser.save();
+    res.status(201).json({ message: 'User added successfully' });
+  } catch (error) {
+    console.error('Error saving user:', error);
+    res.status(500).json({ message: 'Error adding user' });
   }
 };

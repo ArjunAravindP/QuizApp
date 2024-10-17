@@ -2,6 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
+  topic: null,
   quizData: [],
   currentQuizIndex: 0,
   selectedOption: null,
@@ -38,7 +39,15 @@ const quizSlice = createSlice({
       state.error = null;
     },
     setError: (state, action) => {
-      state.error = action.payload; // Set error message
+      state.error = action.payload;
+    },
+    setTopic: (state, action) => {
+      state.topic = action.payload;
+    },
+    setSelectedAns: (state, action) => {
+      const { currentQuizIndex, selectedOption } = action.payload;
+
+      state.quizData[currentQuizIndex].selectedAns = selectedOption;
     },
   },
 });
@@ -51,6 +60,8 @@ export const {
   completeQuiz,
   resetQuiz,
   setError,
+  setTopic,
+  setSelectedAns,
 } = quizSlice.actions;
 
 export default quizSlice.reducer;
