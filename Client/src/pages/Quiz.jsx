@@ -113,7 +113,7 @@ export default function QuizPage() {
                 <div
                   key={index}
                   className={`flex items-center space-x-4 p-4 bg-gray-50 rounded-lg cursor-pointer 
-               ${selectedOption === option ? 'bg-blue-300' : ''}`}
+               ${selectedOption === option ? 'bg-blue-200' : ''}`}
                   onClick={() => handleOptionSelect(option)}
                 >
                   <span className="text-lg font-semibold text-gray-500">

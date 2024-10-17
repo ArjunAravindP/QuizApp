@@ -66,14 +66,11 @@ export default function HomePage() {
             Embark on a Journey of Knowledge Exploration with Our Extensive
             Collection of Interactive Quizzes.
           </p>
-          <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md">
-            Get it now
-          </button>
         </div>
 
         <div className="space-y-6">
           <p className="text-purple-800 font-semibold text-center">
-            HI ANDREW! WHAT TOPIC ARE YOU INTERESTED IN?
+            HI {auth.firstName.toUpperCase()}, WHAT TOPIC ARE YOU INTERESTED IN?
           </p>
           <div className="flex flex-wrap gap-3 items-center justify-center">
             {[
