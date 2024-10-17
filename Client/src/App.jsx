@@ -5,17 +5,36 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import NotFound from './pages/NotFound';
 import QuizPage from './pages/Quiz';
+import AuthOutlet from '@auth-kit/react-router/AuthOutlet';
 
 const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <HomePage />,
-    errorElement: <NotFound />,
-  },
   { path: '/login', element: <Login /> },
   { path: '/signup', element: <Signup /> },
+  {
+    path: '/',
+    children: [
+      {
+        index: true,
+        element: <HomePage />,
+      },
+      {
+        path: 'quiz',
+        element: <AuthOutlet fallbackPath="/login" />,
+        children: [
+          {
+            index: true,
+            element: <HomePage />,
+          },
+          {
+            path: ':category',
+            element: <QuizPage />,
+          },
+        ],
+      },
+    ],
+  },
+
   { path: '*', element: <NotFound /> },
-  { path: '/quiz/:category', element: <QuizPage /> },
 ]);
 
 export default function App() {

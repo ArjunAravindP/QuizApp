@@ -1,9 +1,23 @@
 import { useState } from 'react';
-
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
+import useSignOut from 'react-auth-kit/hooks/useSignOut';
+import { useNavigate } from 'react-router-dom';
 export default function NavBar() {
+  const navigate = useNavigate();
+  const authUser = useAuthUser();
+  const signOut = useSignOut();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const hanndleClick = () => {
+    if (authUser) {
+      signOut();
+      navigate('/');
+    } else {
+      navigate('/login');
+    }
+  };
 
   return (
     <header className="flex justify-between items-center p-6 absolute w-screen">
@@ -19,12 +33,6 @@ export default function NavBar() {
         </a>
         <a href="#" className="hover:text-purple-600">
           Library
-        </a>
-        <a href="#" className="hover:text-purple-600">
-          Courses
-        </a>
-        <a href="#" className="hover:text-purple-600">
-          Test
         </a>
       </nav>
 
@@ -61,21 +69,24 @@ export default function NavBar() {
           <a href="#" className="block hover:text-purple-600">
             Library
           </a>
-          <a href="#" className="block hover:text-purple-600">
-            Courses
-          </a>
-          <a href="#" className="block hover:text-purple-600">
-            Test
-          </a>
-          <button className="bg-purple-100 text-purple-800 hover:bg-purple-200 px-4 py-2 rounded-md">
-            Sign up
-          </button>
+
+          {!authUser && (
+            <button
+              onClick={hanndleClick}
+              className="bg-purple-100 text-purple-800 hover:bg-purple-200 px-4 py-2 rounded-md"
+            >
+              {authUser ? 'LogOut' : 'Login'}
+            </button>
+          )}
         </nav>
       )}
 
       {/* Sign-up Button for Desktop */}
-      <button className="hidden md:block bg-purple-100 text-purple-800 hover:bg-purple-200 px-4 py-2 rounded-md">
-        Sign up
+      <button
+        onClick={hanndleClick}
+        className="hidden md:block bg-purple-100 text-purple-800 hover:bg-purple-200 px-4 py-2 rounded-md"
+      >
+        {authUser ? 'Logout' : 'Login'}
       </button>
     </header>
   );

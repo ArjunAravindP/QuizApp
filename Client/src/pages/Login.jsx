@@ -1,10 +1,12 @@
 import InputField from '../components/form/input';
 import { useState } from 'react';
 import Illustration from '../assets/Illustration.svg';
-// import useSignIn from 'react-auth-kit';
+import useSignIn from 'react-auth-kit/hooks/useSignIn';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
-  // const signIn = useSignIn();
+  const navigate = useNavigate();
+  const signIn = useSignIn();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -52,9 +54,24 @@ export default function Login() {
       });
 
       const data = await response.json();
+      console.log(data);
 
       if (response.ok) {
-        console.log('logged in succesfully');
+        if (
+          signIn({
+            auth: {
+              token: data.token,
+              type: 'Bearer',
+            },
+            refresh: data.refreshToken,
+            userState: data.user,
+          })
+        ) {
+          console.log('logged in succesfully');
+          navigate('/');
+        } else {
+          alert('Something went wrong. Please try again.');
+        }
       } else {
         alert(`Login failed: ${data.message}`);
       }

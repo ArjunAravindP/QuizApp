@@ -18,10 +18,12 @@ import history from '../assets/history.svg';
 import Sience from '../assets/science.svg';
 import PopUp from '../components/Home/Popup';
 import TopicOption from '../components/Home/TopicOption';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
 export default function HomePage() {
   const [isPopupVisible, setPopupVisible] = useState(false);
   const [selectedTopic, setSelcetedTopic] = useState('');
+  const auth = useAuthUser();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -30,8 +32,12 @@ export default function HomePage() {
   }, [dispatch]);
 
   const handleClick = (topic) => {
-    setPopupVisible(true);
-    setSelcetedTopic(topic);
+    if (auth) {
+      setPopupVisible(true);
+      setSelcetedTopic(topic);
+    } else {
+      navigate('/login');
+    }
   };
   const closePopup = async () => {
     setPopupVisible(false);

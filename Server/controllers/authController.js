@@ -3,32 +3,23 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { check, validationResult } = require('express-validator');
 
+const JWT_SECRET = 'this_is_a_secret_test';
+const REFRESH_TOKEN_SECRET = 'this_is_a_secret_test';
+
 exports.postLogin = async (req, res, next) => {
   const { email, password } = req.body;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-
   try {
     const user = await User.findOne({ email });
-    // Check if user exists
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid email or password' });
-    }
-
-    // Trim the password before comparing
-    const isMatch = await bcrypt.compare(password.trim(), user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid email or password' });
-    }
-
+    const isMatch = await bcrypt.compare(password, user.password);
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
-
     res.status(200).json({
       token,
       user: {
@@ -39,7 +30,6 @@ exports.postLogin = async (req, res, next) => {
       },
     });
   } catch (err) {
-    console.error('Error during login:', err);
     res.status(500).json({ message: 'Error during login' });
   }
 };
@@ -51,7 +41,6 @@ exports.signUp = async (req, res, next) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-
   try {
     let existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -60,7 +49,7 @@ exports.signUp = async (req, res, next) => {
         .json({ message: 'User with this email already exists' });
     }
 
-    const hashedPassword = await bcrypt.hash(password.trim(), 10); // Trimmed password
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       firstName,
       lastName,
@@ -69,9 +58,9 @@ exports.signUp = async (req, res, next) => {
     });
 
     await newUser.save();
-    res.status(201).json({ message: 'User added successfully' });
+    res.status(200).json({ message: 'User added successfully' });
   } catch (error) {
-    console.error('Error saving user:', error);
-    res.status(500).json({ message: 'Error adding user' });
+    console.error('Error saving product:', error);
+    res.status(500).json({ message: 'Error adding product' });
   }
 };
