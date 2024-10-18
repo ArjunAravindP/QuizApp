@@ -11,7 +11,8 @@ This project is a fully functional quiz application built with React, styled usi
 
 ## Technologies Used  
 - **Front-end**: React, Tailwind CSS  
-- **State Management**: React Hooks  
+- **State Management**: React Hooks
+- **API**: Open Trivia DB  
 - **Animation**: Framer Motion  
 
 ## Installation
