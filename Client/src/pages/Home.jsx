@@ -70,7 +70,8 @@ export default function HomePage() {
 
         <div className="space-y-6">
           <p className="text-purple-800 font-semibold text-center">
-            HI {auth.firstName.toUpperCase()}, WHAT TOPIC ARE YOU INTERESTED IN?
+            HI {auth ? auth.firstName.toUpperCase() : ''}, WHAT TOPIC ARE YOU
+            INTERESTED IN?
           </p>
           <div className="flex flex-wrap gap-3 items-center justify-center">
             {[

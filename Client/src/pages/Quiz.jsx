@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import QuizComplete from '../components/QuizPage/QuizComplete';
 import { useState } from 'react';
 import Alert from '../components/Alert/Alert';
+import CountDownTimer from '../components/QuizPage/CountDown';
 
 export default function QuizPage() {
   const dispatch = useDispatch();
@@ -40,6 +41,8 @@ export default function QuizPage() {
   };
 
   const handleContinue = () => {
+    console.log('asda');
+
     dispatch(setSelectedAns({ selectedOption, currentQuizIndex }));
 
     if (selectedOption === quizData[currentQuizIndex]?.answer) {
@@ -101,6 +104,13 @@ export default function QuizPage() {
               >
                 End Quiz
               </button>
+              <div>
+                <CountDownTimer
+                  duration={100}
+                  currentQuizIndex={currentQuizIndex}
+                  onTimeUp={handleContinue}
+                />
+              </div>
             </div>
           </div>
           {/* Content Section */}
@@ -113,7 +123,7 @@ export default function QuizPage() {
                 <div
                   key={index}
                   className={`flex items-center space-x-4 p-4 bg-gray-50 rounded-lg cursor-pointer 
-               ${selectedOption === option ? 'bg-blue-200' : ''}`}
+               ${selectedOption === option ? 'bg-blue-300' : ''}`}
                   onClick={() => handleOptionSelect(option)}
                 >
                   <span className="text-lg font-semibold text-gray-500">
